@@ -1,0 +1,42 @@
+body {
+    background: #ccc;
+}
+
+body * {
+    font-family: sans-serif;
+}
+
+.fill {
+    background: url('http://source.unsplash.com/random/150x150');
+    height: 150px;
+    left: 5px;
+    position: relative;
+    top: 5px;
+    width: 150px;
+}
+
+.fill:hover {
+    cursor: pointer;
+}
+
+.empty {
+    background: #fff;
+    border: 3px solid salmon;
+    display: inline-block;
+    margin: 10px;
+    height: 160px;
+    width: 160px;
+}
+
+.hold {
+    border: 4px solid #ccc;
+}
+
+.hovered {
+    background: #f4f4f4;
+    border-style: dashed;
+}
+
+.invisible {
+    display: none;
+}
