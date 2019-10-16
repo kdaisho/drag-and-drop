@@ -24,6 +24,7 @@ body * {
     border: 3px solid salmon;
     display: inline-block;
     margin: 10px;
+    position: relative;
     height: 160px;
     width: 160px;
 }
