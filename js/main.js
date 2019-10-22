@@ -13,8 +13,8 @@ for (let i = 0; i < empties.length; i++) {
 
 function dragStart () {
     console.log('start');
-    this.classList.add("hold");
-    setTimeout(() => this.className = "invisible", 0);
+    // this.classList.add("hold");
+    // setTimeout(() => this.className = "invisible", 0);
 }
 
 function dragEnd () {

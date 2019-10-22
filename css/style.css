@@ -6,13 +6,20 @@ body * {
     font-family: sans-serif;
 }
 
+.container {
+    width: 50%;
+}
+
 .fill {
-    background: url('http://source.unsplash.com/random/150x150');
-    height: 150px;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .5);
     left: 5px;
     position: relative;
-    top: 5px;
-    width: 150px;
+    /* position: absolute; */
+    top: 0;
+    width: calc(100% - 10px);
+    width: 500px;
+    z-index: 999999;
 }
 
 .fill:hover {
@@ -20,13 +27,13 @@ body * {
 }
 
 .empty {
+    align-items: center;
     background: #fff;
     border: 3px solid salmon;
-    display: inline-block;
+    display: flex;
+    height: 25px;
     margin: 10px;
     position: relative;
-    height: 160px;
-    width: 160px;
 }
 
 .hold {
@@ -40,4 +47,17 @@ body * {
 
 .invisible {
     display: none;
+}
+
+.handle {
+    background: orange;
+    display: inline-block;
+    float: right;
+    height: 20px;
+    padding-right: 6px;
+    width: 50px;
+}
+
+.handle:hover {
+    cursor: grab;
 }
