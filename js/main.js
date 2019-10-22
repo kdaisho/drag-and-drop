@@ -1,14 +1,13 @@
-// const fill = document.querySelector(".fill");
-const fills = document.querySelectorAll(".fill");
 const empties = document.querySelectorAll(".empty");
+let fills = "";
 
-// fill.addEventListener("dragstart", dragStart);
-// fill.addEventListener("dragend", dragEnd);
-
-
-for (let i = 0; i < fills.length; i++) {
-    fills[i].addEventListener('dragstart', dragStart);
-    fills[i].addEventListener('dragend', dragEnd);
+function setOrder () {
+    fills = document.querySelectorAll(".fill");
+    for (let i = 0; i < fills.length; i++) {
+        fills[i].addEventListener('dragstart', dragStart);
+        fills[i].addEventListener('dragend', dragEnd);
+    }
+    console.log('Set order:', fills[0], fills[1], fills[2], fills[3], fills[4]);
 }
 
 for (let i = 0; i < empties.length; i++) {
@@ -18,28 +17,34 @@ for (let i = 0; i < empties.length; i++) {
     empties[i].addEventListener('drop', dragDrop);
 }
 
-let grabbed = '';
+setOrder();
+
+let grabbed = "";
+let indexFrom = "";
+let hoverOn = "";
 
 function dragStart () {
-    console.log('start');
     this.classList.add("hold");
     grabbed = this;
-    console.log(grabbed);
     setTimeout(() => this.className = "invisible", 0);
+    indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
+    console.log("start indexFrom", indexFrom);
 }
 
 function dragEnd () {
-    console.log('end');
+    console.log("end");
     this.className = "fill";
 }
 
 function dragOver (event) {
     event.preventDefault();
+    this.classList.add("hovered");
 }
 
 function dragEnter () {
     event.preventDefault();
-    this.classList.add("hovered");
+    // indexTo = parseInt(this.getAttribute("data-position"));
+    // pushAll(indexFrom, indexTo);
 }
 
 function dragLeave () {
@@ -48,8 +53,26 @@ function dragLeave () {
 
 function dragDrop () {
     this.className = "empty";
+
+    indexTo = parseInt(this.getAttribute("data-position"));
+    pushAll(indexFrom, indexTo);
     this.append(grabbed);
+    setTimeout(() => setOrder(), 0);
 }
+
+function pushAll (indexFrom, indexTo) {
+    console.log('PUSH:', indexFrom, indexTo);
+    for (let i = indexFrom + 1; i <= indexTo; i++) {
+        empties[i - 1].append(fills[i]);
+    }
+}
+
+function decide (grabbed, hoverOn) {
+    for (let i = 0; i < hoverOn; i++) {
+        console.log(fills[i]);
+    }
+}
+
 
 //touch device
 // const coordinates = [];
