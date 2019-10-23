@@ -26,6 +26,7 @@ let hoverOn = "";
 function dragStart () {
     this.classList.add("hold");
     grabbed = this;
+    // setTimeout(() => this.className = "invisible", 0);
     setTimeout(() => this.className = "invisible", 0);
     indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
     console.log("start indexFrom", indexFrom);
@@ -43,12 +44,16 @@ function dragOver (event) {
 
 function dragEnter () {
     event.preventDefault();
-    // indexTo = parseInt(this.getAttribute("data-position"));
-    // pushAll(indexFrom, indexTo);
+    indexTo = parseInt(this.getAttribute("data-position"));
+    // adjustTop(indexFrom, indexTo, -42);
+    let operator = indexFrom < indexTo ? "-" : "+";
+
+    adjustTop(indexFrom, indexTo, 42, operator);
 }
 
 function dragLeave () {
     this.className = "empty";
+    adjustTop(indexFrom, indexTo, 0);
 }
 
 function dragDrop () {
@@ -57,13 +62,50 @@ function dragDrop () {
     indexTo = parseInt(this.getAttribute("data-position"));
     pushAll(indexFrom, indexTo);
     this.append(grabbed);
+    adjustTop(indexFrom, indexTo, 0);
     setTimeout(() => setOrder(), 0);
 }
 
 function pushAll (indexFrom, indexTo) {
     console.log('PUSH:', indexFrom, indexTo);
-    for (let i = indexFrom + 1; i <= indexTo; i++) {
-        empties[i - 1].append(fills[i]);
+    if (indexFrom < indexTo) {
+        console.log("Up");
+        for (let i = indexFrom + 1; i <= indexTo; i++) {
+            empties[i - 1].append(fills[i]);
+        }
+    }
+    else {
+        console.log("Down");
+        //3 till 2
+        for (let i = indexFrom - 1; i >= indexTo; i--) {
+            empties[i + 1].append(fills[i]);
+        }
+    }
+}
+
+function adjustTop (indexFrom, indexTo, amount, operator) {
+    console.log("OPE:", operator);
+    if (operator === "-") {
+        for (let i = indexFrom + 1; i <= indexTo; i++) {
+            fills[i].style.top = operator + amount + "px";
+            console.log(fills[i].style.top);
+        }
+    }
+    else if (operator === "+") {
+        console.log('Kochi', indexTo, amount);
+        for (let i = indexTo; i <= indexFrom; i++) {
+            fills[i].style.top = amount + "px";
+        }
+    }
+    else {
+        console.log("RESET TOP", amount);
+        for (let i = indexFrom + 1; i <= indexTo; i++) {
+            fills[i].style.top = operator + amount + "px";
+            console.log(fills[i].style.top);
+        }
+        fills.forEach((fill) => {
+            fill.style.top = 0;
+        });
     }
 }
 

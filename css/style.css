@@ -21,7 +21,6 @@ body * {
 
 .empty {
     align-items: center;
-    background: #fff;
     border: 3px solid salmon;
     display: flex;
     height: 25px;
