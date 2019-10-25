@@ -27,7 +27,6 @@ let indexTo = "";
 function dragStart () {
     this.classList.add("hold");
     grabbed = this;
-    // setTimeout(() => this.className = "invisible", 0);
     setTimeout(() => this.className = "invisible", 0);
     indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
     console.log("start indexFrom", indexFrom);
@@ -104,6 +103,8 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
         }
         fills.forEach((fill) => {
             fill.style.top = 0;
+            //for touch
+            // fill.style.left = 0;
         });
     }
 }
@@ -128,53 +129,76 @@ for (let i = 0; i < fills.length; i++) {
     fills[i].addEventListener("touchend", touchEnd);
 }
 
-let offsetX = 0;
-let offsetY = 0;
+// let offsetX = 0;
+// let offsetY = 0;
 let lastPosition = 0;
 
 const height = 0;
 const width = 0;
 
+function getPosition (coordinates, x, y) {
+    for (let i = 0; i < coordinates.length; i++) {
+        if ((x >= coordinates[i].x && x <= coordinates[i].right) && (y >= coordinates[i].y && y <= coordinates[i].bottom)) {
+            return i;
+        }
+    }
+}
+
 function touchStart (event) {
     const initialLocation = event.targetTouches[0];
+    console.log("initial location", initialLocation.pageX, initialLocation.pageY);
+
+    indexFrom = getPosition(coordinates, initialLocation.pageX, initialLocation.pageY);
+    console.log('HYA', indexFrom);
+
     this.style.position = "relative";
     this.style.zIndex = 100;
-    offsetX = this.getBoundingClientRect().x;
-    offsetY = this.getBoundingClientRect().y;
-    this.style.left = (initialLocation.pageX - offsetX) + 'px';
-    this.style.top = (initialLocation.pageY - offsetY) + 'px';
+    // offsetX = this.getBoundingClientRect().x;
+    // offsetY = this.getBoundingClientRect().y;
+    // this.style.left = (initialLocation.pageX - offsetX) + 'px';
+    this.style.left = (initialLocation.pageX) + 'px';
+    // this.style.top = (initialLocation.pageY - offsetY) + 'px';
+    this.style.top = (initialLocation.pageY) + 'px';
     lastPosition = this.parentElement.getAttribute("data-position");
 }
 
 function touchMove (event) {
     event.preventDefault();
     const touchLocation = event.targetTouches[0];
-    this.style.left = (touchLocation.pageX - offsetX) + 'px';
-    this.style.top = (touchLocation.pageY - offsetY) + 'px';
+    // this.style.left = (touchLocation.pageX - offsetX) + 'px';
+    this.style.left = (touchLocation.pageX) + 'px';
+    this.style.top = (touchLocation.pageY) + 'px';
 
     //brought from desktop logic
     //indexFrom and indexTo cannot be used because dragstart doesn't exist in mobile land
     //you need to create onw indexFrom and indexTo
-    indexFrom = 4, indexTo = 3;
+
+    indexTo = getPosition(coordinates, touchLocation.pageX, touchLocation.pageY);
+
     console.log("MOB FROM AND TO", indexFrom, indexTo)
     let operator = indexFrom < indexTo ? "-" : "+";
-    adjustTop(indexFrom, indexTo, 42, operator);
+    // adjustTop(indexFrom, indexTo, 42, operator);
+
+    //when leave set top 0
 }
 
 function touchEnd (event) {
     console.log("TOUCH END");
-    const x = this.getBoundingClientRect().left + (width / 2);
-    const y = this.getBoundingClientRect().top + (height / 2);
+    pushAll(indexFrom, indexTo);
+    adjustTop(indexFrom, indexTo, 0);
+    empties[indexTo].append(this);
+    // const x = this.getBoundingClientRect().left + (width / 2);
+    // const y = this.getBoundingClientRect().top + (height / 2);
 
-    for (let i = 0; i < coordinates.length; i++) {
-        if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
-            empties[i].append(this);
-            this.style.left = "5px";
-            this.style.top = 0;
-            return false;
-        }
-        empties[lastPosition].append(this);
-        this.style.left = "5px";
-        this.style.top = 0;
-    }
+    // for (let i = 0; i < coordinates.length; i++) {
+    //     if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
+    //         empties[i].append(this);
+    //         this.style.left = "5px";
+    //         this.style.top = 0;
+    //         return false;
+    //     }
+    //     empties[lastPosition].append(this);
+    //     this.style.left = "5px";
+    //     this.style.top = 0;
+    // }
 }

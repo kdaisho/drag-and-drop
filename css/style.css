@@ -11,6 +11,7 @@ body * {
     box-shadow: 0 0 6px rgba(0, 0, 0, .5);
     left: 5px;
     position: relative;
+    opacity: .7;
     top: 0;
     width: calc(100% - 10px);
 }
