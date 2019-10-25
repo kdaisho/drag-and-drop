@@ -1,13 +1,11 @@
 const empties = document.querySelectorAll(".empty");
 var fills = "";
 
-function setOrder () {
-    fills = document.querySelectorAll(".fill");
-    for (let i = 0; i < fills.length; i++) {
-        fills[i].addEventListener('dragstart', dragStart);
-        fills[i].addEventListener('dragend', dragEnd);
-    }
-    console.log('Set order:', fills[0], fills[1], fills[2], fills[3], fills[4]);
+fills = document.querySelectorAll(".fill");
+
+for (let i = 0; i < fills.length; i++) {
+    fills[i].addEventListener('dragstart', dragStart);
+    fills[i].addEventListener('dragend', dragEnd);
 }
 
 for (let i = 0; i < empties.length; i++) {
@@ -23,6 +21,12 @@ let grabbed = "";
 let indexFrom = "";
 let hoverOn = "";
 let indexTo = "";
+
+function setOrder () {
+    fills = document.querySelectorAll(".fill");
+    console.log("FILLS", fills);
+    console.log('Set order:', fills[0], fills[1], fills[2], fills[3], fills[4]);
+}
 
 function dragStart () {
     this.classList.add("hold");
@@ -45,10 +49,10 @@ function dragOver (event) {
 function dragEnter () {
     event.preventDefault();
     indexTo = parseInt(this.getAttribute("data-position"));
-    // adjustTop(indexFrom, indexTo, -42);
-    let operator = indexFrom < indexTo ? "-" : "+";
 
-    adjustTop(indexFrom, indexTo, 42, operator);
+    setTimeout(() => {
+        adjustTop(indexFrom, indexTo, 42, indexFrom < indexTo ? "-" : "+");
+    }, 0);
 }
 
 function dragLeave () {
@@ -61,9 +65,12 @@ function dragDrop () {
 
     indexTo = parseInt(this.getAttribute("data-position"));
     pushAll(indexFrom, indexTo);
-    this.append(grabbed);
     adjustTop(indexFrom, indexTo, 0);
-    setTimeout(() => setOrder(), 0);
+    this.append(grabbed);
+
+    setTimeout(() => {
+        setOrder();
+    }, 250);
 }
 
 function pushAll (indexFrom, indexTo) {
@@ -83,23 +90,41 @@ function pushAll (indexFrom, indexTo) {
 }
 
 function adjustTop (indexFrom, indexTo, amount, operator) {
+    console.log("adjusting");
     console.log("OPE:", operator);
     if (operator === "-") {
         for (let i = indexFrom + 1; i <= indexTo; i++) {
-            fills[i].style.top = fills && fills[i] ? operator + amount + "px" : "";
+            // fills[i].style.top = fills && fills[i] && fills[i].style ? operator + amount + "px" : "";
+            if (fills && fills[i] && fills[i].style) {
+                fills[i].style.top = operator + amount + "px";
+            }
+            else {
+                return false;
+            }
         }
     }
     else if (operator === "+") {
         console.log('Kochi', indexTo, amount);
         for (let i = indexTo; i <= indexFrom; i++) {
-            fills[i].style.top = fills && fills[i] ? amount + "px" : "";
+            // fills[i].style.top = fills && fills[i] && fills[i].style ? amount + "px" : "";
+            if (fills && fills[i] && fills[i].style) {
+                fills[i].style.top = amount + "px";
+            }
+            else {
+                return false;
+            }
         }
     }
     else {
         console.log("RESET TOP", amount);
         for (let i = indexFrom + 1; i <= indexTo; i++) {
-            fills[i].style.top = fills && fills[i] ? operator + amount + "px" : "";
-            console.log(fills[i].style.top);
+            // fills[i].style.top = fills && fills[i] && fills[i].style ? operator + amount + "px" : "";
+            if (fills && fills[i] && fills[i].style) {
+                fills[i].style.top = operator + amount + "px";
+            }
+            else {
+                return false;
+            }
         }
         fills.forEach((fill) => {
             fill.style.top = 0;
@@ -109,96 +134,90 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
     }
 }
 
-function decide (grabbed, hoverOn) {
-    for (let i = 0; i < hoverOn; i++) {
-        console.log(fills[i]);
-    }
-}
-
 
 //touch device
-const coordinates = [];
-for (let i = 0; i < empties.length; i++) {
-    coordinates.push(empties[i].getBoundingClientRect());
-}
-console.log(coordinates);
+// const coordinates = [];
+// for (let i = 0; i < empties.length; i++) {
+//     coordinates.push(empties[i].getBoundingClientRect());
+// }
+// console.log(coordinates);
 
-for (let i = 0; i < fills.length; i++) {
-    fills[i].addEventListener("touchstart", touchStart);
-    fills[i].addEventListener("touchmove", touchMove, {passive: false});
-    fills[i].addEventListener("touchend", touchEnd);
-}
+// for (let i = 0; i < fills.length; i++) {
+//     fills[i].addEventListener("touchstart", touchStart);
+//     fills[i].addEventListener("touchmove", touchMove, {passive: false});
+//     fills[i].addEventListener("touchend", touchEnd);
+// }
 
-// let offsetX = 0;
-// let offsetY = 0;
-let lastPosition = 0;
+// // let offsetX = 0;
+// // let offsetY = 0;
+// let lastPosition = 0;
 
-const height = 0;
-const width = 0;
+// const height = 0;
+// const width = 0;
 
-function getPosition (coordinates, x, y) {
-    for (let i = 0; i < coordinates.length; i++) {
-        if ((x >= coordinates[i].x && x <= coordinates[i].right) && (y >= coordinates[i].y && y <= coordinates[i].bottom)) {
-            return i;
-        }
-    }
-}
+// function getPosition (coordinates, x, y) {
+//     for (let i = 0; i < coordinates.length; i++) {
+//         if ((x >= coordinates[i].x && x <= coordinates[i].right) && (y >= coordinates[i].y && y <= coordinates[i].bottom)) {
+//             return i;
+//         }
+//     }
+// }
 
-function touchStart (event) {
-    const initialLocation = event.targetTouches[0];
-    console.log("initial location", initialLocation.pageX, initialLocation.pageY);
+// function touchStart (event) {
+//     const initialLocation = event.targetTouches[0];
+//     console.log("initial location", initialLocation.pageX, initialLocation.pageY);
 
-    indexFrom = getPosition(coordinates, initialLocation.pageX, initialLocation.pageY);
-    console.log('HYA', indexFrom);
+//     indexFrom = getPosition(coordinates, initialLocation.pageX, initialLocation.pageY);
+//     console.log('HYA', indexFrom);
 
-    this.style.position = "relative";
-    this.style.zIndex = 100;
-    // offsetX = this.getBoundingClientRect().x;
-    // offsetY = this.getBoundingClientRect().y;
-    // this.style.left = (initialLocation.pageX - offsetX) + 'px';
-    this.style.left = (initialLocation.pageX) + 'px';
-    // this.style.top = (initialLocation.pageY - offsetY) + 'px';
-    this.style.top = (initialLocation.pageY) + 'px';
-    lastPosition = this.parentElement.getAttribute("data-position");
-}
+//     this.style.position = "relative";
+//     this.style.zIndex = 100;
+//     // offsetX = this.getBoundingClientRect().x;
+//     // offsetY = this.getBoundingClientRect().y;
+//     // this.style.left = (initialLocation.pageX - offsetX) + 'px';
+//     this.style.left = (initialLocation.pageX) + 'px';
+//     // this.style.top = (initialLocation.pageY - offsetY) + 'px';
+//     this.style.top = (initialLocation.pageY) + 'px';
+//     lastPosition = this.parentElement.getAttribute("data-position");
+// }
 
-function touchMove (event) {
-    event.preventDefault();
-    const touchLocation = event.targetTouches[0];
-    // this.style.left = (touchLocation.pageX - offsetX) + 'px';
-    this.style.left = (touchLocation.pageX) + 'px';
-    this.style.top = (touchLocation.pageY) + 'px';
+// function touchMove (event) {
+//     event.preventDefault();
+//     const touchLocation = event.targetTouches[0];
+//     // this.style.left = (touchLocation.pageX - offsetX) + 'px';
+//     this.style.left = (touchLocation.pageX) + 'px';
+//     this.style.top = (touchLocation.pageY) + 'px';
 
-    //brought from desktop logic
-    //indexFrom and indexTo cannot be used because dragstart doesn't exist in mobile land
-    //you need to create onw indexFrom and indexTo
+//     //brought from desktop logic
+//     //indexFrom and indexTo cannot be used because dragstart doesn't exist in mobile land
+//     //you need to create onw indexFrom and indexTo
 
-    indexTo = getPosition(coordinates, touchLocation.pageX, touchLocation.pageY);
+//     indexTo = getPosition(coordinates, touchLocation.pageX, touchLocation.pageY);
 
-    console.log("MOB FROM AND TO", indexFrom, indexTo)
-    let operator = indexFrom < indexTo ? "-" : "+";
-    // adjustTop(indexFrom, indexTo, 42, operator);
+//     console.log("MOB FROM AND TO", indexFrom, indexTo)
+//     let operator = indexFrom < indexTo ? "-" : "+";
+//     // adjustTop(indexFrom, indexTo, 42, operator);
 
-    //when leave set top 0
-}
+//     //when leave set top 0
+// }
 
-function touchEnd (event) {
-    console.log("TOUCH END");
-    pushAll(indexFrom, indexTo);
-    adjustTop(indexFrom, indexTo, 0);
-    empties[indexTo].append(this);
-    // const x = this.getBoundingClientRect().left + (width / 2);
-    // const y = this.getBoundingClientRect().top + (height / 2);
+// function touchEnd (event) {
+//     console.log("TOUCH END");
+//     pushAll(indexFrom, indexTo);
+//     adjustTop(indexFrom, indexTo, 0);
+//     empties[indexTo].append(this);
+//     // const x = this.getBoundingClientRect().left + (width / 2);
+//     // const y = this.getBoundingClientRect().top + (height / 2);
 
-    // for (let i = 0; i < coordinates.length; i++) {
-    //     if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
-    //         empties[i].append(this);
-    //         this.style.left = "5px";
-    //         this.style.top = 0;
-    //         return false;
-    //     }
-    //     empties[lastPosition].append(this);
-    //     this.style.left = "5px";
-    //     this.style.top = 0;
-    // }
-}
+//     // for (let i = 0; i < coordinates.length; i++) {
+//     //     if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
+//     //         empties[i].append(this);
+//     //         this.style.left = "5px";
+//     //         this.style.top = 0;
+//     //         return false;
+//     //     }
+//     //     empties[lastPosition].append(this);
+//     //     this.style.left = "5px";
+//     //     this.style.top = 0;
+//     // }
+// }
