@@ -64,8 +64,7 @@ function dragDrop () {
     this.className = "empty";
 
     indexTo = parseInt(this.getAttribute("data-position"));
-    pushAll(indexFrom, indexTo);
-    adjustTop(indexFrom, indexTo, 0);
+    appendAll(indexFrom, indexTo, fills);
     this.append(grabbed);
 
     setTimeout(() => {
@@ -73,7 +72,7 @@ function dragDrop () {
     }, 250);
 }
 
-function pushAll (indexFrom, indexTo) {
+function appendAll (indexFrom, indexTo, fills) {
     console.log('PUSH:', indexFrom, indexTo);
     if (indexFrom < indexTo) {
         console.log("Up");
@@ -87,14 +86,15 @@ function pushAll (indexFrom, indexTo) {
             empties[i + 1].append(fills[i]);
         }
     }
+    fills.forEach((fill) => {
+        fill.style.top = 0;
+    })
 }
 
 function adjustTop (indexFrom, indexTo, amount, operator) {
     console.log("adjusting");
-    console.log("OPE:", operator);
     if (operator === "-") {
         for (let i = indexFrom + 1; i <= indexTo; i++) {
-            // fills[i].style.top = fills && fills[i] && fills[i].style ? operator + amount + "px" : "";
             if (fills && fills[i] && fills[i].style) {
                 fills[i].style.top = operator + amount + "px";
             }
@@ -104,9 +104,7 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
         }
     }
     else if (operator === "+") {
-        console.log('Kochi', indexTo, amount);
         for (let i = indexTo; i <= indexFrom; i++) {
-            // fills[i].style.top = fills && fills[i] && fills[i].style ? amount + "px" : "";
             if (fills && fills[i] && fills[i].style) {
                 fills[i].style.top = amount + "px";
             }
@@ -116,16 +114,7 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
         }
     }
     else {
-        console.log("RESET TOP", amount);
-        for (let i = indexFrom + 1; i <= indexTo; i++) {
-            // fills[i].style.top = fills && fills[i] && fills[i].style ? operator + amount + "px" : "";
-            if (fills && fills[i] && fills[i].style) {
-                fills[i].style.top = operator + amount + "px";
-            }
-            else {
-                return false;
-            }
-        }
+        console.log("RESET TOP", indexFrom, indexTo);
         fills.forEach((fill) => {
             fill.style.top = 0;
             //for touch
@@ -203,7 +192,7 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
 
 // function touchEnd (event) {
 //     console.log("TOUCH END");
-//     pushAll(indexFrom, indexTo);
+//     appendAll(indexFrom, indexTo);
 //     adjustTop(indexFrom, indexTo, 0);
 //     empties[indexTo].append(this);
 //     // const x = this.getBoundingClientRect().left + (width / 2);

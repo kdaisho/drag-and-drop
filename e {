@@ -1,0 +1,78 @@
+[1mdiff --git a/js/main.js b/js/main.js[m
+[1mindex 56889dc..4fc9c16 100644[m
+[1m--- a/js/main.js[m
+[1m+++ b/js/main.js[m
+[36m@@ -64,8 +64,7 @@[m [mfunction dragDrop () {[m
+     this.className = "empty";[m
+ [m
+     indexTo = parseInt(this.getAttribute("data-position"));[m
+[31m-    pushAll(indexFrom, indexTo);[m
+[31m-    adjustTop(indexFrom, indexTo, 0);[m
+[32m+[m[32m    appendAll(indexFrom, indexTo, fills);[m
+     this.append(grabbed);[m
+ [m
+     setTimeout(() => {[m
+[36m@@ -73,7 +72,7 @@[m [mfunction dragDrop () {[m
+     }, 250);[m
+ }[m
+ [m
+[31m-function pushAll (indexFrom, indexTo) {[m
+[32m+[m[32mfunction appendAll (indexFrom, indexTo, fills) {[m
+     console.log('PUSH:', indexFrom, indexTo);[m
+     if (indexFrom < indexTo) {[m
+         console.log("Up");[m
+[36m@@ -87,14 +86,15 @@[m [mfunction pushAll (indexFrom, indexTo) {[m
+             empties[i + 1].append(fills[i]);[m
+         }[m
+     }[m
+[32m+[m[32m    fills.forEach((fill) => {[m
+[32m+[m[32m        fill.style.top = 0;[m
+[32m+[m[32m    })[m
+ }[m
+ [m
+ function adjustTop (indexFrom, indexTo, amount, operator) {[m
+     console.log("adjusting");[m
+[31m-    console.log("OPE:", operator);[m
+     if (operator === "-") {[m
+         for (let i = indexFrom + 1; i <= indexTo; i++) {[m
+[31m-            // fills[i].style.top = fills && fills[i] && fills[i].style ? operator + amount + "px" : "";[m
+             if (fills && fills[i] && fills[i].style) {[m
+                 fills[i].style.top = operator + amount + "px";[m
+             }[m
+[36m@@ -104,9 +104,7 @@[m [mfunction adjustTop (indexFrom, indexTo, amount, operator) {[m
+         }[m
+     }[m
+     else if (operator === "+") {[m
+[31m-        console.log('Kochi', indexTo, amount);[m
+         for (let i = indexTo; i <= indexFrom; i++) {[m
+[31m-            // fills[i].style.top = fills && fills[i] && fills[i].style ? amount + "px" : "";[m
+             if (fills && fills[i] && fills[i].style) {[m
+                 fills[i].style.top = amount + "px";[m
+             }[m
+[36m@@ -116,16 +114,7 @@[m [mfunction adjustTop (indexFrom, indexTo, amount, operator) {[m
+         }[m
+     }[m
+     else {[m
+[31m-        console.log("RESET TOP", amount);[m
+[31m-        for (let i = indexFrom + 1; i <= indexTo; i++) {[m
+[31m-            // fills[i].style.top = fills && fills[i] && fills[i].style ? operator + amount + "px" : "";[m
+[31m-            if (fills && fills[i] && fills[i].style) {[m
+[31m-                fills[i].style.top = operator + amount + "px";[m
+[31m-            }[m
+[31m-            else {[m
+[31m-                return false;[m
+[31m-            }[m
+[31m-        }[m
+[32m+[m[32m        console.log("RESET TOP", indexFrom, indexTo);[m
+         fills.forEach((fill) => {[m
+             fill.style.top = 0;[m
+             //for touch[m
+[36m@@ -203,7 +192,7 @@[m [mfunction adjustTop (indexFrom, indexTo, amount, operator) {[m
+ [m
+ // function touchEnd (event) {[m
+ //     console.log("TOUCH END");[m
+[31m-//     pushAll(indexFrom, indexTo);[m
+[32m+[m[32m//     appendAll(indexFrom, indexTo);[m
+ //     adjustTop(indexFrom, indexTo, 0);[m
+ //     empties[indexTo].append(this);[m
+ //     // const x = this.getBoundingClientRect().left + (width / 2);[m
