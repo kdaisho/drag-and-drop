@@ -109,27 +109,16 @@ dd.getPosition = function (x, y) {
 }
 
 dd.touchStart = function (event) {
-    // const initialLocation = event.targetTouches[0];
-    // console.log("initial location", initialLocation.pageX, initialLocation.pageY);
-
     dd.indexFrom = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
     console.log("From Index:", dd.indexFrom);
-
-    this.style.position = "relative";
-    this.style.zIndex = 100;
-    // offsetX = this.getBoundingClientRect().x;
-    // offsetY = this.getBoundingClientRect().y;
-    // this.style.left = (initialLocation.pageX - offsetX) + 'px';
-    // this.style.left = (initialLocation.pageX) + 'px';
-    // this.style.top = (initialLocation.pageY - offsetY) + 'px';
-    // this.style.top = (initialLocation.pageY) + 'px';
-    dd.lastPosition = this.parentElement.getAttribute("data-position");
+    // dd.lastPosition = dd.indexFrom = this.parentElement.getAttribute("data-position");
+    dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
+    console.log("last position:", dd.lastPosition);
+    //seems dd.indexFrom and dd.lastPosition match
 };
 
 dd.touchMove = function (event) {
     event.preventDefault();
-    // const touchLocation = event.targetTouches[0];
-    // this.style.left = (touchLocation.pageX - offsetX) + 'px';
     this.style.left = (event.targetTouches[0].pageX) + 'px';
     this.style.top = (event.targetTouches[0].pageY) + 'px';
 
@@ -139,33 +128,25 @@ dd.touchMove = function (event) {
 
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
 
-    console.log("MOB FROM AND TO", dd.indexFrom, dd.indexTo)
-    let operator = dd.indexFrom < dd.indexTo ? "-" : "+";
-    // adjustTop(indexFrom, indexTo, 42, operator);
+    console.log("FROM, TO", dd.indexFrom, dd.indexTo)
+    dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
 
+    console.log("INDEXTO:",dd.indexTo);
     //when leave set top 0
 };
 
 dd.touchEnd = function (event) {
-    console.log("TOUCH END");
-    dd.appendAll(dd.indexFrom, dd.indexTo);
-    dd.adjustTop(dd.indexFrom, dd.indexTo, 0);
-    dd.empties[dd.indexTo].append(this);
-    // const x = this.getBoundingClientRect().left + (width / 2);
-    // const y = this.getBoundingClientRect().top + (height / 2);
+    console.log("TOUCH END", this, dd.empties, dd.indexTo);
+    // dd.appendAll(dd.indexFrom, dd.indexTo);
+    this.style.left = 0;
+    this.style.top = 0;
 
-    // for (let i = 0; i < coordinates.length; i++) {
-    //     if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
-    //         empties[i].append(this);
-    //         this.style.left = "5px";
-    //         this.style.top = 0;
-    //         return false;
-    //     }
-    //     empties[lastPosition].append(this);
-    //     this.style.left = "5px";
-    //     this.style.top = 0;
-    // }
-}
+    dd.adjustTop();
+    if (dd.indexTo) {
+        dd.appendAll(dd.indexTo);
+        dd.empties[dd.indexTo].append(this);
+    }
+};
 
 
 dd.initTouch = function () {
