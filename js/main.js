@@ -1,102 +1,77 @@
-const empties = document.querySelectorAll(".empty");
-var fills = "";
+const dd = {};
 
-fills = document.querySelectorAll(".fill");
+dd.setOrder = function () {
+    dd.fills = document.querySelectorAll(".fill");
+    console.log("After setting order:", dd.fills[0], dd.fills[1], dd.fills[2], dd.fills[3], dd.fills[4]);
+};
 
-for (let i = 0; i < fills.length; i++) {
-    fills[i].addEventListener('dragstart', dragStart);
-    fills[i].addEventListener('dragend', dragEnd);
-}
-
-for (let i = 0; i < empties.length; i++) {
-    empties[i].addEventListener('dragover', dragOver);
-    empties[i].addEventListener('dragenter', dragEnter);
-    empties[i].addEventListener('dragleave', dragLeave);
-    empties[i].addEventListener('drop', dragDrop);
-}
-
-setOrder();
-
-let grabbed = "";
-let indexFrom = "";
-let hoverOn = "";
-let indexTo = "";
-
-function setOrder () {
-    fills = document.querySelectorAll(".fill");
-    console.log("FILLS", fills);
-    console.log('Set order:', fills[0], fills[1], fills[2], fills[3], fills[4]);
-}
-
-function dragStart () {
-    this.classList.add("hold");
-    grabbed = this;
+dd.dragStart = function () {
+    dd.grabbed = this;
     setTimeout(() => this.className = "invisible", 0);
-    indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
-    console.log("start indexFrom", indexFrom);
-}
+    dd.indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
+    console.log("start indexFrom", dd.indexFrom);
+};
 
-function dragEnd () {
-    console.log("end");
+dd.dragEnd = function () {
     this.className = "fill";
-}
+};
 
-function dragOver (event) {
+dd.dragOver = function (event) {
     event.preventDefault();
     this.classList.add("hovered");
 }
 
-function dragEnter () {
+dd.dragEnter  = function () {
     event.preventDefault();
-    indexTo = parseInt(this.getAttribute("data-position"));
+    dd.indexTo = parseInt(this.getAttribute("data-position"));
 
     setTimeout(() => {
-        adjustTop(indexFrom, indexTo, 42, indexFrom < indexTo ? "-" : "+");
+        dd.adjustTop(dd.indexFrom, dd.indexTo, dd.indexFrom < dd.indexTo ? "-" : "+");
     }, 0);
-}
+};
 
-function dragLeave () {
+dd.dragLeave = function () {
     this.className = "empty";
-    adjustTop(indexFrom, indexTo, 0);
-}
+    dd.adjustTop(dd.indexFrom, dd.indexTo, null);
+};
 
-function dragDrop () {
+dd.dragDrop = function () {
     this.className = "empty";
 
-    indexTo = parseInt(this.getAttribute("data-position"));
-    appendAll(indexFrom, indexTo, fills);
-    this.append(grabbed);
+    dd.indexTo = parseInt(this.getAttribute("data-position"));
+    dd.appendAll(dd.indexFrom, dd.indexTo, dd.fills);
+    this.append(dd.grabbed);
 
     setTimeout(() => {
-        setOrder();
+        dd.setOrder();
     }, 250);
-}
+};
 
-function appendAll (indexFrom, indexTo, fills) {
-    console.log('PUSH:', indexFrom, indexTo);
-    if (indexFrom < indexTo) {
+dd.appendAll = function (indexFrom, indexTo, fills) {
+    console.log('PUSH:', dd.indexFrom, dd.indexTo);
+    if (dd.indexFrom < dd.indexTo) {
         console.log("Up");
-        for (let i = indexFrom + 1; i <= indexTo; i++) {
-            empties[i - 1].append(fills[i]);
+        for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
+            dd.empties[i - 1].append(dd.fills[i]);
         }
     }
     else {
         console.log("Down");
-        for (let i = indexFrom - 1; i >= indexTo; i--) {
-            empties[i + 1].append(fills[i]);
+        for (let i = dd.indexFrom - 1; i >= dd.indexTo; i--) {
+            dd.empties[i + 1].append(dd.fills[i]);
         }
     }
-    fills.forEach((fill) => {
-        fill.style.top = 0;
+    dd.fills.forEach((fill) => {
+        fill.classList.remove("up", "down");
     })
-}
+};
 
-function adjustTop (indexFrom, indexTo, amount, operator) {
+dd.adjustTop = function (indexFrom, indexTo, operator) {
     console.log("adjusting");
     if (operator === "-") {
-        for (let i = indexFrom + 1; i <= indexTo; i++) {
-            if (fills && fills[i] && fills[i].style) {
-                fills[i].style.top = operator + amount + "px";
+        for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
+            if (dd.fills && dd.fills[i] && dd.fills[i].style) {
+                dd.fills[i].classList.add("up");
             }
             else {
                 return false;
@@ -104,9 +79,9 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
         }
     }
     else if (operator === "+") {
-        for (let i = indexTo; i <= indexFrom; i++) {
-            if (fills && fills[i] && fills[i].style) {
-                fills[i].style.top = amount + "px";
+        for (let i = dd.indexTo; i <= dd.indexFrom; i++) {
+            if (dd.fills && dd.fills[i] && dd.fills[i].style) {
+                dd.fills[i].classList.add("down");
             }
             else {
                 return false;
@@ -114,15 +89,34 @@ function adjustTop (indexFrom, indexTo, amount, operator) {
         }
     }
     else {
-        console.log("RESET TOP", indexFrom, indexTo);
-        fills.forEach((fill) => {
-            fill.style.top = 0;
-            //for touch
-            // fill.style.left = 0;
+        console.log("RESET TOP", dd.indexFrom, dd.indexTo);
+        dd.fills.forEach((fill) => {
+            fill.classList.remove("up", "down");
         });
     }
 }
 
+dd.init = function () {
+    dd.empties = document.getElementsByClassName("empty");
+    dd.fills = "";
+    dd.grabed = "";
+    dd.indexFrom = "";
+    dd.indexTo = "";
+    dd.hoverOn = "";
+    dd.setOrder();
+    for (let i = 0; i < dd.fills.length; i++) {
+        dd.fills[i].addEventListener('dragstart', dd.dragStart);
+        dd.fills[i].addEventListener('dragend', dd.dragEnd);
+    }
+    for (let i = 0; i < dd.empties.length; i++) {
+        dd.empties[i].addEventListener('dragover', dd.dragOver);
+        dd.empties[i].addEventListener('dragenter', dd.dragEnter);
+        dd.empties[i].addEventListener('dragleave', dd.dragLeave);
+        dd.empties[i].addEventListener('drop', dd.dragDrop);
+    }
+};
+
+dd.init();
 
 //touch device
 // const coordinates = [];
