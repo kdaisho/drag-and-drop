@@ -57,6 +57,7 @@ dd.appendAll = function (indexTo) {
 };
 
 dd.adjustTop = function (operator) {
+    console.log("Adjusting", operator);
     if (operator === "up") {
         for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
             dd.fills[i].classList.add("up");
@@ -122,14 +123,11 @@ dd.touchMove = function (event) {
     this.style.left = (event.targetTouches[0].pageX) + 'px';
     this.style.top = (event.targetTouches[0].pageY) + 'px';
 
-    //brought from desktop logic
-    //indexFrom and indexTo cannot be used because dragstart doesn't exist in mobile land
-    //you need to create onw indexFrom and indexTo
-
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
 
-    console.log("FROM, TO", dd.indexFrom, dd.indexTo)
-    dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+    if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
+        dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+    }
 
     console.log("INDEXTO:",dd.indexTo);
     //when leave set top 0
@@ -142,7 +140,8 @@ dd.touchEnd = function (event) {
     this.style.top = 0;
 
     dd.adjustTop();
-    if (dd.indexTo) {
+    if (typeof dd.indexTo === "number") {
+        console.log(dd.empties, dd.indexTo);
         dd.appendAll(dd.indexTo);
         dd.empties[dd.indexTo].append(this);
     }
