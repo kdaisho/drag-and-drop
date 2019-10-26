@@ -109,14 +109,14 @@ dd.getPosition = function (x, y) {
     }
 }
 
-dd.isIn = function (element) {
-    console.log("ELE", element.getBoundingClientRect());
-    // for (let i = 0; i < dd.coordinates.length; i++) {
-    //     if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
-    //         return i;
-    //     }
-    // }
-    return;
+dd.isIn = function (x, y) {
+    console.log("is in", x, y);
+    for (let i = 0; i < dd.coordinates.length; i++) {
+        if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
+            console.log("IN");
+            return i;
+        }
+    }
 };
 
 dd.touchStart = function (event) {
@@ -129,19 +129,16 @@ dd.touchStart = function (event) {
 
 dd.touchMove = function (event) {
     event.preventDefault();
-    console.log("MOVING", event.targetTouches[0]);
-    // this.style.left = (event.targetTouches[0].pageX) + 'px';
-    this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px"
-    // this.style.top = (event.targetTouches[0].pageY) + "px";
+    this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
     this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
 
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
-
-    if (dd.isIn(this)) {
+    console.log("Is_IN, dd.INDEXTO", dd.isIn(event.targetTouches[0].pageX, event.targetTouches[0].pageY), dd.indexTo);
+    // if (dd.isIn(event.targetTouches[0].pageX, event.targetTouches[0].pageY)) {
         if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
             dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
         }
-    }
+    // }
 
     console.log("INDEXTO:",dd.indexTo);
     //when leave set top 0
@@ -159,6 +156,7 @@ dd.touchEnd = function (event) {
         dd.appendAll(dd.indexTo);
         dd.empties[dd.indexTo].append(this);
     }
+    setTimeout(() => dd.setOrder(), 0);
 };
 
 
@@ -176,6 +174,7 @@ dd.initTouch = function () {
         dd.fills[i].addEventListener("touchmove", dd.touchMove, {passive: false});
         dd.fills[i].addEventListener("touchend", dd.touchEnd);
     }
+    console.log(dd.coordinates);
 };
 
 dd.initTouch();
