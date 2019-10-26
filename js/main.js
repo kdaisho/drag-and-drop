@@ -109,24 +109,38 @@ dd.getPosition = function (x, y) {
     }
 }
 
+dd.isIn = function (element) {
+    console.log("ELE", element.getBoundingClientRect());
+    // for (let i = 0; i < dd.coordinates.length; i++) {
+    //     if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
+    //         return i;
+    //     }
+    // }
+    return;
+};
+
 dd.touchStart = function (event) {
     dd.indexFrom = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
-    console.log("From Index:", dd.indexFrom);
-    // dd.lastPosition = dd.indexFrom = this.parentElement.getAttribute("data-position");
     dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
-    console.log("last position:", dd.lastPosition);
-    //seems dd.indexFrom and dd.lastPosition match
+    dd.initialX = this.getBoundingClientRect().x;
+    dd.initialY = this.getBoundingClientRect().y;
+    console.log(dd.initialX, dd.initialY);
 };
 
 dd.touchMove = function (event) {
     event.preventDefault();
-    this.style.left = (event.targetTouches[0].pageX) + 'px';
-    this.style.top = (event.targetTouches[0].pageY) + 'px';
+    console.log("MOVING", event.targetTouches[0]);
+    // this.style.left = (event.targetTouches[0].pageX) + 'px';
+    this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px"
+    // this.style.top = (event.targetTouches[0].pageY) + "px";
+    this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
 
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
 
-    if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
-        dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+    if (dd.isIn(this)) {
+        if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
+            dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+        }
     }
 
     console.log("INDEXTO:",dd.indexTo);
@@ -153,7 +167,7 @@ dd.initTouch = function () {
     dd.lastPosition = 0;
     dd.height = 0;
     dd.width = 0;
-
+    dd.initialLocation;
     for (let i = 0; i < dd.empties.length; i++) {
         dd.coordinates.push(dd.empties[i].getBoundingClientRect());
     }
