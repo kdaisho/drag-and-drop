@@ -6,6 +6,21 @@ body * {
     font-family: sans-serif;
 }
 
+div[data-element="0"] {
+    background: #fe4a49;
+}
+div[data-element="1"] {
+    background: #2ab7ca;
+}
+div[data-element="2"] {
+    background: #ced766;
+}
+div[data-element="3"] {
+    background: #e6e6ea;
+}
+div[data-element="4"] {
+    background: #f4f4f8;
+}
 .fill {
     background: #fff;
     box-shadow: 0 0 6px rgba(0, 0, 0, .5);
