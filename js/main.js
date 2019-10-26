@@ -96,89 +96,92 @@ dd.init = function () {
 
 dd.init();
 
-//touch device
-// const coordinates = [];
-// for (let i = 0; i < empties.length; i++) {
-//     coordinates.push(empties[i].getBoundingClientRect());
-// }
-// console.log(coordinates);
 
-// for (let i = 0; i < fills.length; i++) {
-//     fills[i].addEventListener("touchstart", touchStart);
-//     fills[i].addEventListener("touchmove", touchMove, {passive: false});
-//     fills[i].addEventListener("touchend", touchEnd);
-// }
+// ************************ TOUCH ***********
+//touch devices
 
-// // let offsetX = 0;
-// // let offsetY = 0;
-// let lastPosition = 0;
+dd.getPosition = function (x, y) {
+    for (let i = 0; i < dd.coordinates.length; i++) {
+        if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
+            return i;
+        }
+    }
+}
 
-// const height = 0;
-// const width = 0;
+dd.touchStart = function (event) {
+    // const initialLocation = event.targetTouches[0];
+    // console.log("initial location", initialLocation.pageX, initialLocation.pageY);
 
-// function getPosition (coordinates, x, y) {
-//     for (let i = 0; i < coordinates.length; i++) {
-//         if ((x >= coordinates[i].x && x <= coordinates[i].right) && (y >= coordinates[i].y && y <= coordinates[i].bottom)) {
-//             return i;
-//         }
-//     }
-// }
+    dd.indexFrom = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
+    console.log("From Index:", dd.indexFrom);
 
-// function touchStart (event) {
-//     const initialLocation = event.targetTouches[0];
-//     console.log("initial location", initialLocation.pageX, initialLocation.pageY);
+    this.style.position = "relative";
+    this.style.zIndex = 100;
+    // offsetX = this.getBoundingClientRect().x;
+    // offsetY = this.getBoundingClientRect().y;
+    // this.style.left = (initialLocation.pageX - offsetX) + 'px';
+    // this.style.left = (initialLocation.pageX) + 'px';
+    // this.style.top = (initialLocation.pageY - offsetY) + 'px';
+    // this.style.top = (initialLocation.pageY) + 'px';
+    dd.lastPosition = this.parentElement.getAttribute("data-position");
+};
 
-//     indexFrom = getPosition(coordinates, initialLocation.pageX, initialLocation.pageY);
-//     console.log('HYA', indexFrom);
+dd.touchMove = function (event) {
+    event.preventDefault();
+    // const touchLocation = event.targetTouches[0];
+    // this.style.left = (touchLocation.pageX - offsetX) + 'px';
+    this.style.left = (event.targetTouches[0].pageX) + 'px';
+    this.style.top = (event.targetTouches[0].pageY) + 'px';
 
-//     this.style.position = "relative";
-//     this.style.zIndex = 100;
-//     // offsetX = this.getBoundingClientRect().x;
-//     // offsetY = this.getBoundingClientRect().y;
-//     // this.style.left = (initialLocation.pageX - offsetX) + 'px';
-//     this.style.left = (initialLocation.pageX) + 'px';
-//     // this.style.top = (initialLocation.pageY - offsetY) + 'px';
-//     this.style.top = (initialLocation.pageY) + 'px';
-//     lastPosition = this.parentElement.getAttribute("data-position");
-// }
+    //brought from desktop logic
+    //indexFrom and indexTo cannot be used because dragstart doesn't exist in mobile land
+    //you need to create onw indexFrom and indexTo
 
-// function touchMove (event) {
-//     event.preventDefault();
-//     const touchLocation = event.targetTouches[0];
-//     // this.style.left = (touchLocation.pageX - offsetX) + 'px';
-//     this.style.left = (touchLocation.pageX) + 'px';
-//     this.style.top = (touchLocation.pageY) + 'px';
+    dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
 
-//     //brought from desktop logic
-//     //indexFrom and indexTo cannot be used because dragstart doesn't exist in mobile land
-//     //you need to create onw indexFrom and indexTo
+    console.log("MOB FROM AND TO", dd.indexFrom, dd.indexTo)
+    let operator = dd.indexFrom < dd.indexTo ? "-" : "+";
+    // adjustTop(indexFrom, indexTo, 42, operator);
 
-//     indexTo = getPosition(coordinates, touchLocation.pageX, touchLocation.pageY);
+    //when leave set top 0
+};
 
-//     console.log("MOB FROM AND TO", indexFrom, indexTo)
-//     let operator = indexFrom < indexTo ? "-" : "+";
-//     // adjustTop(indexFrom, indexTo, 42, operator);
+dd.touchEnd = function (event) {
+    console.log("TOUCH END");
+    dd.appendAll(dd.indexFrom, dd.indexTo);
+    dd.adjustTop(dd.indexFrom, dd.indexTo, 0);
+    dd.empties[dd.indexTo].append(this);
+    // const x = this.getBoundingClientRect().left + (width / 2);
+    // const y = this.getBoundingClientRect().top + (height / 2);
 
-//     //when leave set top 0
-// }
+    // for (let i = 0; i < coordinates.length; i++) {
+    //     if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
+    //         empties[i].append(this);
+    //         this.style.left = "5px";
+    //         this.style.top = 0;
+    //         return false;
+    //     }
+    //     empties[lastPosition].append(this);
+    //     this.style.left = "5px";
+    //     this.style.top = 0;
+    // }
+}
 
-// function touchEnd (event) {
-//     console.log("TOUCH END");
-//     appendAll(indexFrom, indexTo);
-//     adjustTop(indexFrom, indexTo, 0);
-//     empties[indexTo].append(this);
-//     // const x = this.getBoundingClientRect().left + (width / 2);
-//     // const y = this.getBoundingClientRect().top + (height / 2);
 
-//     // for (let i = 0; i < coordinates.length; i++) {
-//     //     if (x > coordinates[i].left && x < coordinates[i].right && y > coordinates[i].top && y < coordinates[i].bottom) {
-//     //         empties[i].append(this);
-//     //         this.style.left = "5px";
-//     //         this.style.top = 0;
-//     //         return false;
-//     //     }
-//     //     empties[lastPosition].append(this);
-//     //     this.style.left = "5px";
-//     //     this.style.top = 0;
-//     // }
-// }
+dd.initTouch = function () {
+    dd.coordinates = [];
+    dd.lastPosition = 0;
+    dd.height = 0;
+    dd.width = 0;
+
+    for (let i = 0; i < dd.empties.length; i++) {
+        dd.coordinates.push(dd.empties[i].getBoundingClientRect());
+    }
+    for (let i = 0; i < dd.fills.length; i++) {
+        dd.fills[i].addEventListener("touchstart", dd.touchStart);
+        dd.fills[i].addEventListener("touchmove", dd.touchMove, {passive: false});
+        dd.fills[i].addEventListener("touchend", dd.touchEnd);
+    }
+};
+
+dd.initTouch();
