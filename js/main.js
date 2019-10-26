@@ -7,13 +7,12 @@ dd.setOrder = function () {
 
 dd.dragStart = function () {
     dd.grabbed = this;
-    setTimeout(() => this.className = "invisible", 0);
+    setTimeout(() => this.classList.add("invisible"), 0);
     dd.indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
-    console.log("start indexFrom", dd.indexFrom);
 };
 
 dd.dragEnd = function () {
-    this.className = "fill";
+    this.classList.remove("invisible");
 };
 
 dd.dragOver = function (event) {
@@ -21,78 +20,57 @@ dd.dragOver = function (event) {
     this.classList.add("hovered");
 }
 
-dd.dragEnter  = function () {
+dd.dragEnter = function () {
     event.preventDefault();
     dd.indexTo = parseInt(this.getAttribute("data-position"));
-
-    setTimeout(() => {
-        dd.adjustTop(dd.indexFrom, dd.indexTo, dd.indexFrom < dd.indexTo ? "-" : "+");
-    }, 0);
+    setTimeout(() => dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down"), 0);
 };
 
 dd.dragLeave = function () {
-    this.className = "empty";
-    dd.adjustTop(dd.indexFrom, dd.indexTo, null);
+    this.classList.remove("hovered");
+    dd.adjustTop();
 };
 
 dd.dragDrop = function () {
-    this.className = "empty";
-
-    dd.indexTo = parseInt(this.getAttribute("data-position"));
-    dd.appendAll(dd.indexFrom, dd.indexTo, dd.fills);
+    this.classList.remove("hovered");
+    dd.appendAll(parseInt(this.getAttribute("data-position")));
     this.append(dd.grabbed);
-
-    setTimeout(() => {
-        dd.setOrder();
-    }, 250);
+    setTimeout(() => dd.setOrder(), 0);
 };
 
-dd.appendAll = function (indexFrom, indexTo, fills) {
-    console.log('PUSH:', dd.indexFrom, dd.indexTo);
-    if (dd.indexFrom < dd.indexTo) {
+dd.appendAll = function (indexTo) {
+    if (dd.indexFrom < indexTo) {
         console.log("Up");
-        for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
+        for (let i = dd.indexFrom + 1; i <= indexTo; i++) {
             dd.empties[i - 1].append(dd.fills[i]);
         }
     }
     else {
         console.log("Down");
-        for (let i = dd.indexFrom - 1; i >= dd.indexTo; i--) {
+        for (let i = dd.indexFrom - 1; i >= indexTo; i--) {
             dd.empties[i + 1].append(dd.fills[i]);
         }
     }
-    dd.fills.forEach((fill) => {
-        fill.classList.remove("up", "down");
-    })
+    for (let i = 0; i < dd.fills.length; i++) {
+        dd.fills[i].classList.remove("up", "down");
+    }
 };
 
-dd.adjustTop = function (indexFrom, indexTo, operator) {
-    console.log("adjusting");
-    if (operator === "-") {
+dd.adjustTop = function (operator) {
+    if (operator === "up") {
         for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
-            if (dd.fills && dd.fills[i] && dd.fills[i].style) {
-                dd.fills[i].classList.add("up");
-            }
-            else {
-                return false;
-            }
+            dd.fills[i].classList.add("up");
         }
     }
-    else if (operator === "+") {
+    else if (operator === "down") {
         for (let i = dd.indexTo; i <= dd.indexFrom; i++) {
-            if (dd.fills && dd.fills[i] && dd.fills[i].style) {
-                dd.fills[i].classList.add("down");
-            }
-            else {
-                return false;
-            }
+            dd.fills[i].classList.add("down");
         }
     }
     else {
-        console.log("RESET TOP", dd.indexFrom, dd.indexTo);
-        dd.fills.forEach((fill) => {
-            fill.classList.remove("up", "down");
-        });
+        for (let i = 0; i < dd.fills.length; i++) {
+            dd.fills[i].classList.remove("up", "down");
+        }
     }
 }
 
