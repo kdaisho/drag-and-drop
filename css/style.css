@@ -44,6 +44,11 @@ div[data-element="4"] {
     top: 42px;
 }
 
+.fill.newtral {
+    left: 5px;
+    top: 0;
+}
+
 .empty {
     align-items: center;
     border: 3px solid salmon;

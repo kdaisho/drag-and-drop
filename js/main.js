@@ -33,6 +33,7 @@ dd.dragLeave = function () {
 
 dd.dragDrop = function () {
     this.classList.remove("hovered");
+    dd.removeUpDownFromFills();
     dd.appendAll(parseInt(this.getAttribute("data-position")));
     this.append(dd.grabbed);
     setTimeout(() => dd.setOrder(), 0);
@@ -50,9 +51,6 @@ dd.appendAll = function (indexTo) {
         for (let i = dd.indexFrom - 1; i >= indexTo; i--) {
             dd.empties[i + 1].append(dd.fills[i]);
         }
-    }
-    for (let i = 0; i < dd.fills.length; i++) {
-        dd.fills[i].classList.remove("up", "down");
     }
 };
 
@@ -119,6 +117,12 @@ dd.isIn = function (x, y) {
     }
 };
 
+dd.removeUpDownFromFills = function () {
+    for (let i = 0; i < dd.fills.length; i++) {
+        dd.fills[i].classList.remove("up", "down");
+    }
+}
+
 dd.touchStart = function (event) {
     dd.indexFrom = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
     dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
@@ -140,6 +144,9 @@ dd.touchMove = function (event) {
     if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
         dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
     }
+    else {
+        dd.removeUpDownFromFills();
+    }
 };
 
 dd.touchEnd = function (event) {
@@ -147,7 +154,12 @@ dd.touchEnd = function (event) {
     this.style.left = "5px";
     this.style.top = 0;
 
-    if (typeof dd.indexTo === "number" && dd.last !== dd.indexTo) {
+    this.removeAttribute("style");
+    //when dd.indexTo is undefined, up, down class won't be removed
+    //so remove them here
+    dd.removeUpDownFromFills();
+
+    if (typeof dd.indexTo === "number" && dd.currentSpot !== dd.indexTo) {
         dd.appendAll(dd.indexTo);
         dd.empties[dd.indexTo].append(this);
         dd.currentSpot = dd.indexTo;
