@@ -128,29 +128,25 @@ dd.touchStart = function (event) {
 };
 
 dd.touchMove = function (event) {
+    console.log("TOUICH MOVE FIRED");
     event.preventDefault();
     this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
     this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
 
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
     console.log("Is_IN, dd.INDEXTO", dd.isIn(event.targetTouches[0].pageX, event.targetTouches[0].pageY), dd.indexTo);
-    // if (dd.isIn(event.targetTouches[0].pageX, event.targetTouches[0].pageY)) {
-        if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
-            dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
-        }
-    // }
-
-    console.log("INDEXTO:",dd.indexTo);
-    //when leave set top 0
+    //isIN function is not needed
+    if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
+        dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+    }
 };
 
 dd.touchEnd = function (event) {
     console.log("TOUCH END", this, dd.empties, dd.indexTo);
-    // dd.appendAll(dd.indexFrom, dd.indexTo);
-    this.style.left = 0;
+    this.style.left = "5px";
     this.style.top = 0;
 
-    dd.adjustTop();
+    // dd.adjustTop();
     if (typeof dd.indexTo === "number") {
         console.log(dd.empties, dd.indexTo);
         dd.appendAll(dd.indexTo);
@@ -158,7 +154,6 @@ dd.touchEnd = function (event) {
     }
     setTimeout(() => dd.setOrder(), 0);
 };
-
 
 dd.initTouch = function () {
     dd.coordinates = [];
