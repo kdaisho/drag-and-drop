@@ -128,13 +128,14 @@ dd.touchStart = function (event) {
 };
 
 dd.touchMove = function (event) {
-    console.log("TOUICH MOVE FIRED");
-    event.preventDefault();
+    console.log("TOUICH MOVE FIRED", event);
+    event.cancelable ? event.preventDefault() : "";
     this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
     this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
 
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
-    console.log("Is_IN, dd.INDEXTO", dd.isIn(event.targetTouches[0].pageX, event.targetTouches[0].pageY), dd.indexTo);
+    //when dd.indexTo is undefined, fill is outside
+    console.log("It's in", dd.indexTo);
     //isIN function is not needed
     if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
         dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
@@ -142,15 +143,14 @@ dd.touchMove = function (event) {
 };
 
 dd.touchEnd = function (event) {
-    console.log("TOUCH END", this, dd.empties, dd.indexTo);
+    console.log("TOUCH END", typeof dd.indexTo);
     this.style.left = "5px";
     this.style.top = 0;
 
-    // dd.adjustTop();
-    if (typeof dd.indexTo === "number") {
-        console.log(dd.empties, dd.indexTo);
+    if (typeof dd.indexTo === "number" && dd.last !== dd.indexTo) {
         dd.appendAll(dd.indexTo);
         dd.empties[dd.indexTo].append(this);
+        dd.currentSpot = dd.indexTo;
     }
     setTimeout(() => dd.setOrder(), 0);
 };
@@ -161,6 +161,8 @@ dd.initTouch = function () {
     dd.height = 0;
     dd.width = 0;
     dd.initialLocation;
+    dd.currentSpot;
+
     for (let i = 0; i < dd.empties.length; i++) {
         dd.coordinates.push(dd.empties[i].getBoundingClientRect());
     }
