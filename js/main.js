@@ -41,13 +41,11 @@ dd.dragDrop = function () {
 
 dd.appendAll = function (indexTo) {
     if (dd.indexFrom < indexTo) {
-        console.log("Up");
         for (let i = dd.indexFrom + 1; i <= indexTo; i++) {
             dd.empties[i - 1].append(dd.fills[i]);
         }
     }
     else {
-        console.log("Down");
         for (let i = dd.indexFrom - 1; i >= indexTo; i--) {
             dd.empties[i + 1].append(dd.fills[i]);
         }
@@ -55,7 +53,6 @@ dd.appendAll = function (indexTo) {
 };
 
 dd.adjustTop = function (operator) {
-    console.log("Adjusting", operator);
     if (operator === "up") {
         for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
             dd.fills[i].classList.add("up");
@@ -108,10 +105,8 @@ dd.getPosition = function (x, y) {
 }
 
 dd.isIn = function (x, y) {
-    console.log("is in", x, y);
     for (let i = 0; i < dd.coordinates.length; i++) {
         if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
-            console.log("IN");
             return i;
         }
     }
@@ -126,31 +121,36 @@ dd.removeUpDownFromFills = function () {
 dd.touchStart = function (event) {
     dd.indexFrom = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
     dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
-    dd.initialX = this.getBoundingClientRect().x;
+    //initialX: calculated by subtracting gap
+    dd.initialX = event.targetTouches[0].pageX - this.getBoundingClientRect().x;
     dd.initialY = this.getBoundingClientRect().y;
-    console.log(dd.initialX, dd.initialY);
 };
 
 dd.touchMove = function (event) {
-    console.log("TOUICH MOVE FIRED", event);
     event.cancelable ? event.preventDefault() : "";
-    this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
-    this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
+    window.requestAnimationFrame(() => {
+        this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
+        this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
 
-    dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
-    //when dd.indexTo is undefined, fill is outside
-    console.log("It's in", dd.indexTo);
-    //isIN function is not needed
-    if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
-        dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
-    }
-    else {
-        dd.removeUpDownFromFills();
-    }
+        dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
+        if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
+            if (!dd.gotIn) {
+                dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+                dd.gotIn = true;
+                console.count("inside");
+            }
+        }
+        else {
+            if (dd.gotIn) {
+                dd.removeUpDownFromFills();
+                console.count("outside");
+                dd.gotIn = false;
+            }
+        }
+    });
 };
 
 dd.touchEnd = function (event) {
-    console.log("TOUCH END", typeof dd.indexTo);
     this.style.left = "5px";
     this.style.top = 0;
 
@@ -170,10 +170,10 @@ dd.touchEnd = function (event) {
 dd.initTouch = function () {
     dd.coordinates = [];
     dd.lastPosition = 0;
-    dd.height = 0;
-    dd.width = 0;
     dd.initialLocation;
     dd.currentSpot;
+    dd.isOut;
+    dd.gotIn;
 
     for (let i = 0; i < dd.empties.length; i++) {
         dd.coordinates.push(dd.empties[i].getBoundingClientRect());
@@ -183,7 +183,6 @@ dd.initTouch = function () {
         dd.fills[i].addEventListener("touchmove", dd.touchMove, {passive: false});
         dd.fills[i].addEventListener("touchend", dd.touchEnd);
     }
-    console.log(dd.coordinates);
 };
 
 dd.initTouch();
