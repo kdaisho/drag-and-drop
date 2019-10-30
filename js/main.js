@@ -1,6 +1,7 @@
 const dd = {};
 
-dd.setOrder = function () {
+dd.setOrder = function (element) {
+    element && element.removeAttribute("style");
     dd.fills = document.querySelectorAll(".fill");
     console.log("After setting order:", dd.fills[0], dd.fills[1], dd.fills[2], dd.fills[3], dd.fills[4]);
 };
@@ -151,10 +152,12 @@ dd.touchMove = function (event) {
 };
 
 dd.touchEnd = function (event) {
+    console.log("TOUCH END ONE", this);
     this.style.left = "5px";
     this.style.top = 0;
-
     this.removeAttribute("style");
+    console.log("TOUCH END TWO", this);
+
     //when dd.indexTo is undefined, up, down class won't be removed
     //so remove them here
     dd.removeUpDownFromFills();
@@ -164,7 +167,7 @@ dd.touchEnd = function (event) {
         dd.empties[dd.indexTo].append(this);
         dd.currentSpot = dd.indexTo;
     }
-    setTimeout(() => dd.setOrder(), 0);
+    setTimeout(() => dd.setOrder(this), 250);
 };
 
 dd.initTouch = function () {
@@ -172,7 +175,6 @@ dd.initTouch = function () {
     dd.lastPosition = 0;
     dd.initialLocation;
     dd.currentSpot;
-    dd.isOut;
     dd.gotIn;
 
     for (let i = 0; i < dd.empties.length; i++) {

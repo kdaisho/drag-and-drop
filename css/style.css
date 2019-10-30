@@ -38,11 +38,11 @@ div[data-element="4"] {
 }
 
 .fill.up {
-    top: -46px;
+    top: -56px;
 }
 
 .fill.down {
-   top: 46px;
+   top: 56px;
 }
 
 .empty {
@@ -50,7 +50,7 @@ div[data-element="4"] {
     border: 3px solid salmon;
     display: flex;
     height: 40px;
-    /* margin: 10px; */
+    margin: 10px;
     position: relative;
 }
 
