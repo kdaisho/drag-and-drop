@@ -24,6 +24,7 @@ div[data-element="4"] {
 .fill {
     background: #fff;
     box-shadow: 0 0 6px rgba(0, 0, 0, .5);
+    height: 32px;
     left: 5px;
     position: relative;
     opacity: .7;
@@ -37,19 +38,19 @@ div[data-element="4"] {
 }
 
 .fill.up {
-    top: -42px;
+    top: -46px;
 }
 
 .fill.down {
-    top: 42px;
+   top: 46px;
 }
 
 .empty {
     align-items: center;
     border: 3px solid salmon;
     display: flex;
-    height: 25px;
-    margin: 10px;
+    height: 40px;
+    /* margin: 10px; */
     position: relative;
 }
 
