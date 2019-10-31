@@ -7,24 +7,27 @@ body * {
 }
 
 div[data-element="0"] {
-    background: #fe4a49;
+    background: #ffeb3b;
 }
 div[data-element="1"] {
-    background: #2ab7ca;
+    background:#8bc34a;
 }
 div[data-element="2"] {
-    background: #ced766;
+    background: #03a9f4;
 }
 div[data-element="3"] {
-    background: #e6e6ea;
+    background: #e91e63;
 }
 div[data-element="4"] {
-    background: #f4f4f8;
+    background: #607d8b;
 }
 .fill {
+    align-items: center;
     background: #fff;
     box-shadow: 0 0 6px rgba(0, 0, 0, .5);
-    height: 32px;
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
     left: 5px;
     position: relative;
     opacity: .7;
@@ -38,24 +41,30 @@ div[data-element="4"] {
 }
 
 .fill.up {
-    top: -56px;
+    top: -66px;
 }
 
 .fill.down {
-   top: 56px;
+   top: 66px;
+}
+
+.text {
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding-left: 16px;
+    user-select: none;
 }
 
 .empty {
     align-items: center;
     border: 3px solid salmon;
     display: flex;
-    height: 40px;
-    margin: 10px;
+    height: 50px;
+    margin: 6px 10px;
     position: relative;
 }
 
 .hovered {
-    background: #f4f4f4;
     border-style: dashed;
 }
 
@@ -65,9 +74,8 @@ div[data-element="4"] {
 
 .handle {
     background: orange;
-    display: inline-block;
     float: right;
-    height: 20px;
+    height: 40px;
     padding-right: 6px;
     width: 50px;
 }

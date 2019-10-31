@@ -2,8 +2,8 @@ const dd = {};
 
 dd.setOrder = function (element) {
     element && element.removeAttribute("style");
+    dd.lastPos && dd.empties[dd.lastPos].classList.remove("hovered");
     dd.fills = document.querySelectorAll(".fill");
-    console.log("After setting order:", dd.fills[0], dd.fills[1], dd.fills[2], dd.fills[3], dd.fills[4]);
 };
 
 dd.dragStart = function () {
@@ -132,37 +132,36 @@ dd.touchMove = function (event) {
     window.requestAnimationFrame(() => {
         this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
         this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
-
         dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
         if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
             if (!dd.gotIn) {
+                dd.lastPos = dd.indexTo;
+                console.log('ha?');
+                dd.empties[dd.indexTo].classList.add("hovered");
                 dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
                 dd.gotIn = true;
-                console.count("inside");
             }
         }
         else {
             if (dd.gotIn) {
+                dd.empties[dd.lastPos].classList.remove("hovered");
                 dd.removeUpDownFromFills();
-                console.count("outside");
                 dd.gotIn = false;
             }
         }
     });
 };
 
-dd.touchEnd = function (event) {
-    console.log("TOUCH END ONE", this);
+dd.touchEnd = function () {
     this.style.left = "5px";
     this.style.top = 0;
     this.removeAttribute("style");
-    console.log("TOUCH END TWO", this);
 
     //when dd.indexTo is undefined, up, down class won't be removed
     //so remove them here
     dd.removeUpDownFromFills();
-
     if (typeof dd.indexTo === "number" && dd.currentSpot !== dd.indexTo) {
+        dd.empties[dd.indexTo].classList.remove("hovered");
         dd.appendAll(dd.indexTo);
         dd.empties[dd.indexTo].append(this);
         dd.currentSpot = dd.indexTo;
@@ -176,6 +175,8 @@ dd.initTouch = function () {
     dd.initialLocation;
     dd.currentSpot;
     dd.gotIn;
+    dd.lastPos;
+    dd.locked;
 
     for (let i = 0; i < dd.empties.length; i++) {
         dd.coordinates.push(dd.empties[i].getBoundingClientRect());
