@@ -162,8 +162,10 @@ dd.touchEnd = function () {
     dd.removeUpDownFromFills();
     if (typeof dd.indexTo === "number" && dd.currentSpot !== dd.indexTo) {
         dd.empties[dd.indexTo].classList.remove("hovered");
-        dd.appendAll(dd.indexTo);
-        dd.empties[dd.indexTo].append(this);
+        setTimeout(() => {
+            dd.appendAll(dd.indexTo);
+            dd.empties[dd.indexTo].append(this);
+        }, 0);
         dd.currentSpot = dd.indexTo;
     }
     setTimeout(() => dd.setOrder(this), 250);
