@@ -122,21 +122,19 @@ dd.removeUpDownFromFills = function () {
 dd.touchStart = function (event) {
     dd.indexFrom = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
     dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
-    //initialX: calculated by subtracting gap
-    dd.initialX = event.targetTouches[0].pageX - this.getBoundingClientRect().x;
-    dd.initialY = this.getBoundingClientRect().y;
+    dd.initialX = event.targetTouches[0].pageX;
+    dd.initialY = event.targetTouches[0].pageY;
+    console.log(dd.initialX, dd.initialY);
 };
 
 dd.touchMove = function (event) {
     event.cancelable ? event.preventDefault() : "";
     window.requestAnimationFrame(() => {
-        this.style.left = (event.targetTouches[0].pageX - dd.initialX) + "px";
-        this.style.top = (event.targetTouches[0].pageY - dd.initialY) + "px";
+        this.style.transform = `translate(${event.targetTouches[0].pageX - dd.initialX}px, ${event.targetTouches[0].pageY - dd.initialY}px)`;
         dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
         if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
             if (!dd.gotIn) {
                 dd.lastPos = dd.indexTo;
-                console.log('ha?');
                 dd.empties[dd.indexTo].classList.add("hovered");
                 dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
                 dd.gotIn = true;
@@ -150,6 +148,7 @@ dd.touchMove = function (event) {
             }
         }
     });
+    console.log("move")
 };
 
 dd.touchEnd = function () {
@@ -168,6 +167,7 @@ dd.touchEnd = function () {
         }, 0);
         dd.currentSpot = dd.indexTo;
     }
+    console.log("end fired");
     setTimeout(() => dd.setOrder(this), 250);
 };
 
