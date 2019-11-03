@@ -60,7 +60,7 @@ dd.adjustTop = function (operator) {
         }
     }
     else if (operator === "down") {
-        for (let i = dd.indexTo; i <= dd.indexFrom; i++) {
+        for (let i = dd.indexTo; i < dd.indexFrom; i++) {
             dd.fills[i].classList.add("down");
         }
     }
@@ -154,12 +154,15 @@ dd.touchMove = function (event) {
 dd.touchEnd = function () {
     this.style.left = "5px";
     this.style.top = 0;
+    console.log("L:OUT", dd.indexTo, dd.currentSpot);
     this.removeAttribute("style");
 
     //when dd.indexTo is undefined, up, down class won't be removed
     //so remove them here
     dd.removeUpDownFromFills();
-    if (typeof dd.indexTo === "number" && dd.currentSpot !== dd.indexTo) {
+    // if (typeof dd.indexTo === "number" && dd.currentSpot !== dd.indexTo) {
+    if (typeof dd.indexTo === "number") {
+        console.log("L:IN", dd.indexTo, dd.currentSpot);
         dd.empties[dd.indexTo].classList.remove("hovered");
         setTimeout(() => {
             dd.appendAll(dd.indexTo);
@@ -168,7 +171,7 @@ dd.touchEnd = function () {
         dd.currentSpot = dd.indexTo;
     }
     console.log("end fired");
-    setTimeout(() => dd.setOrder(this), 250);
+    setTimeout(() => dd.setOrder(this), 0);
 };
 
 dd.initTouch = function () {
