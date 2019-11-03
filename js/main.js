@@ -93,10 +93,7 @@ dd.init = function () {
 
 dd.init();
 
-
 // ************************ TOUCH ***********
-//touch devices
-
 dd.getPosition = function (x, y) {
     for (let i = 0; i < dd.coordinates.length; i++) {
         if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
@@ -174,6 +171,10 @@ dd.initTouch = function () {
         dd.fills[i].addEventListener("touchmove", dd.touchMove, {passive: false});
         dd.fills[i].addEventListener("touchend", dd.touchEnd);
     }
+};
+
+window.onorientationchange = () => {
+    dd.setOrder();
 };
 
 dd.initTouch();
