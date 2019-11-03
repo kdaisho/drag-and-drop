@@ -30,10 +30,10 @@ div[data-element="4"] {
     height: 40px;
     left: 5px;
     position: relative;
-    opacity: .7;
     top: 0;
     transition: top .25s;
     width: calc(100% - 10px);
+    z-index: 10;
 }
 
 .fill:hover {

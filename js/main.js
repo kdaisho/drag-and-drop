@@ -105,14 +105,6 @@ dd.getPosition = function (x, y) {
     }
 }
 
-dd.isIn = function (x, y) {
-    for (let i = 0; i < dd.coordinates.length; i++) {
-        if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
-            return i;
-        }
-    }
-};
-
 dd.removeUpDownFromFills = function () {
     for (let i = 0; i < dd.fills.length; i++) {
         dd.fills[i].classList.remove("up", "down");
@@ -124,6 +116,7 @@ dd.touchStart = function (event) {
     dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
     dd.initialX = event.targetTouches[0].pageX;
     dd.initialY = event.targetTouches[0].pageY;
+    this.style.zIndex = 100;
     console.log(dd.initialX, dd.initialY);
 };
 
@@ -148,30 +141,21 @@ dd.touchMove = function (event) {
             }
         }
     });
-    console.log("move")
 };
 
 dd.touchEnd = function () {
-    this.style.left = "5px";
-    this.style.top = 0;
-    console.log("L:OUT", dd.indexTo, dd.currentSpot);
     this.removeAttribute("style");
-
-    //when dd.indexTo is undefined, up, down class won't be removed
-    //so remove them here
     dd.removeUpDownFromFills();
-    // if (typeof dd.indexTo === "number" && dd.currentSpot !== dd.indexTo) {
     if (typeof dd.indexTo === "number") {
-        console.log("L:IN", dd.indexTo, dd.currentSpot);
         dd.empties[dd.indexTo].classList.remove("hovered");
-        setTimeout(() => {
-            dd.appendAll(dd.indexTo);
-            dd.empties[dd.indexTo].append(this);
-        }, 0);
+        dd.appendAll(dd.indexTo);
+        dd.empties[dd.indexTo].append(this);
         dd.currentSpot = dd.indexTo;
     }
     console.log("end fired");
-    setTimeout(() => dd.setOrder(this), 0);
+    setTimeout(() => {
+        dd.setOrder(this);
+    }, 100);
 };
 
 dd.initTouch = function () {
@@ -181,7 +165,6 @@ dd.initTouch = function () {
     dd.currentSpot;
     dd.gotIn;
     dd.lastPos;
-    dd.locked;
 
     for (let i = 0; i < dd.empties.length; i++) {
         dd.coordinates.push(dd.empties[i].getBoundingClientRect());
