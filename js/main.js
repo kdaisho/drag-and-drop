@@ -114,7 +114,6 @@ dd.touchStart = function (event) {
     dd.initialX = event.targetTouches[0].pageX;
     dd.initialY = event.targetTouches[0].pageY;
     this.style.zIndex = 100;
-    console.log(dd.initialX, dd.initialY);
 };
 
 dd.touchMove = function (event) {
@@ -149,7 +148,6 @@ dd.touchEnd = function () {
         dd.empties[dd.indexTo].append(this);
         dd.currentSpot = dd.indexTo;
     }
-    console.log("end fired");
     setTimeout(() => {
         dd.setOrder(this);
     }, 100);

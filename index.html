@@ -8,40 +8,40 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Drag and Drop</h1>
+    <section class="container">
+        <header>
+            <h1 class="heading">Skills</h1>
+            <p>What qualities do you expect most from me? Please sort them in order.</p>
+        </header>
 
-    <div class="container">
-        <div class="empty" data-position="0">
-            <div class="fill" draggable="true" data-element="0">
-                <span class="text">Element 1&nbsp;</span>
-                <span class="handle"></span>
+        <div class="empties">
+            <div class="empty" data-position="0">
+                <div class="fill" draggable="true" data-element="0">
+                    <span class="text">Handling office politics well</span>
+                </div>
+            </div>
+            <div class="empty" data-position="1">
+                <div class="fill" draggable="true" data-element="1">
+                    <span class="text">Having good eyes for design</span>
+                </div>
+            </div>
+            <div class="empty" data-position="2">
+                <div class="fill" draggable="true" data-element="2">
+                    <span class="text">Believing writing vanilla JavaScript is best</span>
+                </div>
+            </div>
+            <div class="empty" data-position="3">
+                <div class="fill" draggable="true" data-element="3">
+                    <span class="text">Good at handling latest JS frameworks</span>
+                </div>
+            </div>
+            <div class="empty" data-position="4">
+                <div class="fill" draggable="true" data-element="4">
+                    <span class="text">Resolving Git conflicts well</span>
+                </div>
             </div>
         </div>
-        <div class="empty" data-position="1">
-            <div class="fill" draggable="true" data-element="1">
-                <span class="text">Element 2&nbsp;</span>
-                <span class="handle"></span>
-            </div>
-        </div>
-        <div class="empty" data-position="2">
-            <div class="fill" draggable="true" data-element="2">
-                <span class="text">Element 3&nbsp;</span>
-                <span class="handle"></span>
-            </div>
-        </div>
-        <div class="empty" data-position="3">
-            <div class="fill" draggable="true" data-element="3">
-                <span class="text">Element 4&nbsp;</span>
-                <span class="handle"></span>
-            </div>
-        </div>
-        <div class="empty" data-position="4">
-            <div class="fill" draggable="true" data-element="4">
-                <span class="text">Element 5&nbsp;</span>
-                <span class="handle"></span>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <script src="js/main.js"></script>
 </body>
