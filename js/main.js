@@ -1,6 +1,6 @@
 const dd = {};
 
-dd.setOrder = function (element) {
+dd.setOrder = element => {
     element && element.removeAttribute("style");
     dd.lastPos && dd.empties[dd.lastPos].classList.remove("hovered");
     dd.fills = document.querySelectorAll(".fill");
@@ -40,7 +40,7 @@ dd.dragDrop = function () {
     setTimeout(() => dd.setOrder(), 0);
 };
 
-dd.appendAll = function (indexTo) {
+dd.appendAll = indexTo => {
     if (dd.indexFrom < indexTo) {
         for (let i = dd.indexFrom + 1; i <= indexTo; i++) {
             dd.empties[i - 1].append(dd.fills[i]);
@@ -53,7 +53,7 @@ dd.appendAll = function (indexTo) {
     }
 };
 
-dd.adjustTop = function (operator) {
+dd.adjustTop = operator => {
     if (operator === "up") {
         for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
             dd.fills[i].classList.add("up");
@@ -71,7 +71,7 @@ dd.adjustTop = function (operator) {
     }
 }
 
-dd.init = function () {
+dd.init = () => {
     dd.empties = document.getElementsByClassName("empty");
     dd.fills = "";
     dd.grabed = "";
@@ -94,7 +94,7 @@ dd.init = function () {
 dd.init();
 
 // ************************ TOUCH ***********
-dd.getPosition = function (x, y) {
+dd.getPosition = (x, y) => {
     for (let i = 0; i < dd.coordinates.length; i++) {
         if ((x >= dd.coordinates[i].x && x <= dd.coordinates[i].right) && (y >= dd.coordinates[i].y && y <= dd.coordinates[i].bottom)) {
             return i;
@@ -102,7 +102,7 @@ dd.getPosition = function (x, y) {
     }
 }
 
-dd.removeUpDownFromFills = function () {
+dd.removeUpDownFromFills = () => {
     for (let i = 0; i < dd.fills.length; i++) {
         dd.fills[i].classList.remove("up", "down");
     }
@@ -153,7 +153,7 @@ dd.touchEnd = function () {
     }, 100);
 };
 
-dd.initTouch = function () {
+dd.initTouch = () => {
     dd.coordinates = [];
     dd.lastPosition = 0;
     dd.initialLocation;
