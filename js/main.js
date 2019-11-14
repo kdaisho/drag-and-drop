@@ -24,49 +24,40 @@ dd.dragOver = function (event) {
 dd.dragEnter = function () {
     event.preventDefault();
     dd.indexTo = parseInt(this.getAttribute("data-position"));
-    setTimeout(() => dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down"), 0);
+    setTimeout(() => dd.pushTags(dd.indexFrom < dd.indexTo), 0);
 };
 
 dd.dragLeave = function () {
     this.classList.remove("hovered");
-    dd.adjustTop();
+    for (let i = 0; i < dd.fills.length; i++) {
+        dd.fills[i].classList.remove("up", "down");
+    }
 };
 
 dd.dragDrop = function () {
     this.classList.remove("hovered");
     dd.removeUpDownFromFills();
-    dd.appendAll(parseInt(this.getAttribute("data-position")));
+    dd.dropTags(parseInt(this.getAttribute("data-position")));
     this.append(dd.grabbed);
     setTimeout(() => dd.setOrder(), 0);
 };
 
-dd.appendAll = indexTo => {
-    if (dd.indexFrom < indexTo) {
-        for (let i = dd.indexFrom + 1; i <= indexTo; i++) {
-            dd.empties[i - 1].append(dd.fills[i]);
-        }
-    }
-    else {
-        for (let i = dd.indexFrom - 1; i >= indexTo; i--) {
-            dd.empties[i + 1].append(dd.fills[i]);
+dd.dropTags = indexTo => {
+    dd.indexFrom < indexTo ? appendTags(dd.indexFrom + 1, indexTo, -1) : appendTags(indexTo, dd.indexFrom - 1, 1);
+
+    function appendTags (initialIndex, endIndex, offset) {
+        for (let i = initialIndex; i <= endIndex; i++) {
+            dd.empties[i + offset].append(dd.fills[i]);
         }
     }
 };
 
-dd.adjustTop = operator => {
-    if (operator === "up") {
-        for (let i = dd.indexFrom + 1; i <= dd.indexTo; i++) {
-            dd.fills[i].classList.add("up");
-        }
-    }
-    else if (operator === "down") {
-        for (let i = dd.indexTo; i < dd.indexFrom; i++) {
-            dd.fills[i].classList.add("down");
-        }
-    }
-    else {
-        for (let i = 0; i < dd.fills.length; i++) {
-            dd.fills[i].classList.remove("up", "down");
+dd.pushTags = downwards => {
+    downwards ? addClassName("up", dd.indexFrom + 1, dd.indexTo) : addClassName("down", dd.indexTo, dd.indexFrom - 1);
+
+    function addClassName (className, initialIndex, endIndex) {
+        for (let i = initialIndex; i <= endIndex; i++) {
+            dd.fills[i].classList.add(className);
         }
     }
 }
@@ -125,7 +116,7 @@ dd.touchMove = function (event) {
             if (!dd.gotIn) {
                 dd.lastPos = dd.indexTo;
                 dd.empties[dd.indexTo].classList.add("hovered");
-                dd.adjustTop(dd.indexFrom < dd.indexTo ? "up" : "down");
+                dd.pushTags(dd.indexFrom < dd.indexTo);
                 dd.gotIn = true;
             }
         }
@@ -144,7 +135,7 @@ dd.touchEnd = function () {
     dd.removeUpDownFromFills();
     if (typeof dd.indexTo === "number") {
         dd.empties[dd.indexTo].classList.remove("hovered");
-        dd.appendAll(dd.indexTo);
+        dd.dropTags(dd.indexTo);
         dd.empties[dd.indexTo].append(this);
         dd.currentSpot = dd.indexTo;
     }
