@@ -2,12 +2,12 @@ const dd = {};
 
 dd.setOrder = element => {
     element && element.removeAttribute("style");
-    dd.lastPos && dd.empties[dd.lastPos].classList.remove("hovered");
-    dd.fills = document.querySelectorAll(".fill");
+    dd.lastPosition && dd.spots[dd.lastPosition].classList.remove("hovered");
+    dd.tags = document.querySelectorAll(".fill");
 };
 
 dd.dragStart = function () {
-    dd.grabbed = this;
+    dd.currentTag = this;
     setTimeout(() => this.classList.add("invisible"), 0);
     dd.indexFrom = parseInt(this.parentElement.getAttribute("data-position"));
 };
@@ -29,8 +29,8 @@ dd.dragEnter = function () {
 
 dd.dragLeave = function () {
     this.classList.remove("hovered");
-    for (let i = 0; i < dd.fills.length; i++) {
-        dd.fills[i].classList.remove("up", "down");
+    for (let i = 0; i < dd.tags.length; i++) {
+        dd.tags[i].classList.remove("up", "down");
     }
 };
 
@@ -38,7 +38,7 @@ dd.dragDrop = function () {
     this.classList.remove("hovered");
     dd.removeUpDownFromFills();
     dd.dropTags(parseInt(this.getAttribute("data-position")));
-    this.append(dd.grabbed);
+    this.append(dd.currentTag);
     setTimeout(() => dd.setOrder(), 0);
 };
 
@@ -47,7 +47,7 @@ dd.dropTags = indexTo => {
 
     function appendTags (initialIndex, endIndex, offset) {
         for (let i = initialIndex; i <= endIndex; i++) {
-            dd.empties[i + offset].append(dd.fills[i]);
+            dd.spots[i + offset].append(dd.tags[i]);
         }
     }
 };
@@ -57,28 +57,27 @@ dd.pushTags = downwards => {
 
     function addClassName (className, initialIndex, endIndex) {
         for (let i = initialIndex; i <= endIndex; i++) {
-            dd.fills[i].classList.add(className);
+            dd.tags[i].classList.add(className);
         }
     }
 }
 
 dd.init = () => {
-    dd.empties = document.getElementsByClassName("empty");
-    dd.fills = "";
-    dd.grabed = "";
+    dd.spots = document.getElementsByClassName("empty");
+    dd.tags = "";
+    dd.currentTag = "";
     dd.indexFrom = "";
     dd.indexTo = "";
-    dd.hoverOn = "";
     dd.setOrder();
-    for (let i = 0; i < dd.fills.length; i++) {
-        dd.fills[i].addEventListener('dragstart', dd.dragStart);
-        dd.fills[i].addEventListener('dragend', dd.dragEnd);
+    for (let i = 0; i < dd.tags.length; i++) {
+        dd.tags[i].addEventListener('dragstart', dd.dragStart);
+        dd.tags[i].addEventListener('dragend', dd.dragEnd);
     }
-    for (let i = 0; i < dd.empties.length; i++) {
-        dd.empties[i].addEventListener('dragover', dd.dragOver);
-        dd.empties[i].addEventListener('dragenter', dd.dragEnter);
-        dd.empties[i].addEventListener('dragleave', dd.dragLeave);
-        dd.empties[i].addEventListener('drop', dd.dragDrop);
+    for (let i = 0; i < dd.spots.length; i++) {
+        dd.spots[i].addEventListener('dragover', dd.dragOver);
+        dd.spots[i].addEventListener('dragenter', dd.dragEnter);
+        dd.spots[i].addEventListener('dragleave', dd.dragLeave);
+        dd.spots[i].addEventListener('drop', dd.dragDrop);
     }
 };
 
@@ -94,8 +93,8 @@ dd.getPosition = (x, y) => {
 }
 
 dd.removeUpDownFromFills = () => {
-    for (let i = 0; i < dd.fills.length; i++) {
-        dd.fills[i].classList.remove("up", "down");
+    for (let i = 0; i < dd.tags.length; i++) {
+        dd.tags[i].classList.remove("up", "down");
     }
 }
 
@@ -113,18 +112,17 @@ dd.touchMove = function (event) {
         this.style.transform = `translate(${event.targetTouches[0].pageX - dd.initialX}px, ${event.targetTouches[0].pageY - dd.initialY}px)`;
         dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
         if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
-            if (!dd.gotIn) {
-                dd.lastPos = dd.indexTo;
-                dd.empties[dd.indexTo].classList.add("hovered");
+            if (!dd.inside) {
+                dd.spots[dd.indexTo].classList.add("hovered");
                 dd.pushTags(dd.indexFrom < dd.indexTo);
-                dd.gotIn = true;
+                dd.inside = true;
             }
         }
         else {
-            if (dd.gotIn) {
-                dd.empties[dd.lastPos].classList.remove("hovered");
+            if (dd.inside) {
+                dd.spots[dd.lastPosition].classList.remove("hovered");
                 dd.removeUpDownFromFills();
-                dd.gotIn = false;
+                dd.inside = false;
             }
         }
     });
@@ -134,10 +132,9 @@ dd.touchEnd = function () {
     this.removeAttribute("style");
     dd.removeUpDownFromFills();
     if (typeof dd.indexTo === "number") {
-        dd.empties[dd.indexTo].classList.remove("hovered");
+        dd.spots[dd.indexTo].classList.remove("hovered");
         dd.dropTags(dd.indexTo);
-        dd.empties[dd.indexTo].append(this);
-        dd.currentSpot = dd.indexTo;
+        dd.spots[dd.indexTo].append(this);
     }
     setTimeout(() => {
         dd.setOrder(this);
@@ -147,18 +144,15 @@ dd.touchEnd = function () {
 dd.initTouch = () => {
     dd.coordinates = [];
     dd.lastPosition = 0;
-    dd.initialLocation;
-    dd.currentSpot;
-    dd.gotIn;
-    dd.lastPos;
+    dd.inside = false;
 
-    for (let i = 0; i < dd.empties.length; i++) {
-        dd.coordinates.push(dd.empties[i].getBoundingClientRect());
+    for (let i = 0; i < dd.spots.length; i++) {
+        dd.coordinates.push(dd.spots[i].getBoundingClientRect());
     }
-    for (let i = 0; i < dd.fills.length; i++) {
-        dd.fills[i].addEventListener("touchstart", dd.touchStart);
-        dd.fills[i].addEventListener("touchmove", dd.touchMove, {passive: false});
-        dd.fills[i].addEventListener("touchend", dd.touchEnd);
+    for (let i = 0; i < dd.tags.length; i++) {
+        dd.tags[i].addEventListener("touchstart", dd.touchStart);
+        dd.tags[i].addEventListener("touchmove", dd.touchMove, {passive: false});
+        dd.tags[i].addEventListener("touchend", dd.touchEnd);
     }
 };
 
