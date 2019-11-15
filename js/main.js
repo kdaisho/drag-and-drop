@@ -107,34 +107,38 @@ dd.touchStart = function (event) {
 };
 
 dd.touchMove = function (event) {
+    dd.hasMoved = true;
     event.cancelable ? event.preventDefault() : "";
     window.requestAnimationFrame(() => {
         this.style.transform = `translate(${event.targetTouches[0].pageX - dd.initialX}px, ${event.targetTouches[0].pageY - dd.initialY}px)`;
         dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
         if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
-            if (!dd.inside) {
+            if (!dd.wasInside) {
+                dd.lastSpot = dd.indexTo;
                 dd.spots[dd.indexTo].classList.add("hovered");
                 dd.pushTags(dd.indexFrom < dd.indexTo);
-                dd.inside = true;
+                dd.wasInside = true;
             }
         }
         else {
-            if (dd.inside) {
-                dd.spots[dd.lastPosition].classList.remove("hovered");
+            if (dd.wasInside) {
+                dd.spots[dd.lastSpot].classList.remove("hovered");
                 dd.removeUpDownFromFills();
-                dd.inside = false;
+                dd.wasInside = false;
             }
         }
     });
 };
 
 dd.touchEnd = function () {
+    if (!dd.hasMoved) return false;
     this.removeAttribute("style");
     dd.removeUpDownFromFills();
     if (typeof dd.indexTo === "number") {
         dd.spots[dd.indexTo].classList.remove("hovered");
         dd.dropTags(dd.indexTo);
         dd.spots[dd.indexTo].append(this);
+        dd.hasMoved = false;
     }
     setTimeout(() => {
         dd.setOrder(this);
@@ -144,7 +148,9 @@ dd.touchEnd = function () {
 dd.initTouch = () => {
     dd.coordinates = [];
     dd.lastPosition = 0;
-    dd.inside = false;
+    dd.wasInside = false;
+    dd.lastSpot = "";
+    dd.hasMoved = false;
 
     for (let i = 0; i < dd.spots.length; i++) {
         dd.coordinates.push(dd.spots[i].getBoundingClientRect());
