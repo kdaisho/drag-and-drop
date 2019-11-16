@@ -1,7 +1,6 @@
 const dd = {};
 
-dd.setOrder = element => {
-    element && element.removeAttribute("style");
+dd.setOrder = () => {
     dd.lastPosition && dd.spots[dd.lastPosition].classList.remove("hovered");
     dd.tags = document.querySelectorAll(".fill");
 };
@@ -132,17 +131,17 @@ dd.touchMove = function (event) {
 
 dd.touchEnd = function () {
     if (!dd.hasMoved) return false;
-    this.removeAttribute("style");
     dd.removeUpDownFromFills();
     if (typeof dd.indexTo === "number") {
-        dd.spots[dd.indexTo].classList.remove("hovered");
+        dd.spots[dd.indexTo] && dd.spots[dd.indexTo].classList.remove("hovered");
         dd.dropTags(dd.indexTo);
         dd.spots[dd.indexTo].append(this);
         dd.hasMoved = false;
     }
-    setTimeout(() => {
-        dd.setOrder(this);
-    }, 100);
+    requestAnimationFrame(() => {
+        this.removeAttribute("style");
+        dd.setOrder();
+    });
 };
 
 dd.initTouch = () => {
