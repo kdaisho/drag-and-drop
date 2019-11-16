@@ -38,7 +38,7 @@ header {
 .heading {
     padding-bottom: 15px;
 }
-.fill {
+.tag {
     align-items: center;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
     display: flex;
@@ -52,15 +52,15 @@ header {
     z-index: 10;
 }
 
-.fill:hover {
+.tag:hover {
     cursor: pointer;
 }
 
-.fill.up {
+.tag.up {
     top: -60px;
 }
 
-.fill.down {
+.tag.down {
    top: 56px;
 }
 
@@ -70,7 +70,7 @@ header {
     user-select: none;
 }
 
-.empty {
+.spot {
     align-items: center;
     border: 1px solid #4d4d4d;
     display: flex;
