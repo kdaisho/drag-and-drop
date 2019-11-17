@@ -102,12 +102,14 @@ dd.touchStart = function (event) {
     dd.lastPosition = parseInt(this.parentElement.getAttribute("data-position"));
     dd.initialX = event.targetTouches[0].pageX;
     dd.initialY = event.targetTouches[0].pageY;
-    this.style.zIndex = 100;
 };
 
 dd.touchMove = function (event) {
-    if (!dd.hasMoved) dd.hasMoved = true;
     if (event.cancelable) event.preventDefault();
+    if (!dd.hasMoved) {
+        dd.hasMoved = true;
+        this.style.zIndex = 100;
+    }
     this.style.transform = `translate(${event.targetTouches[0].pageX - dd.initialX}px, ${event.targetTouches[0].pageY - dd.initialY}px)`;
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
     if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
