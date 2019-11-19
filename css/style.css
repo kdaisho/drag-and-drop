@@ -12,19 +12,22 @@ body * {
 }
 
 div[data-element="0"] {
-    background: #ffeb3b;
-}
-div[data-element="1"] {
     background:#8bc34a;
 }
+div[data-element="1"] {
+    background: #ffeb3b;
+}
 div[data-element="2"] {
-    background: #03a9f4;
+    background: #607d8b;
 }
 div[data-element="3"] {
     background: #e91e63;
 }
 div[data-element="4"] {
-    background: #607d8b;
+    background: #03a9f4;
+}
+div[data-element="5"] {
+    background: #fff;
 }
 
 .container {
