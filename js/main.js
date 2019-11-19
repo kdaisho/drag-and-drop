@@ -112,14 +112,14 @@ dd.touchMove = function (event) {
     }
     this.style.transform = `translate(${event.targetTouches[0].pageX - dd.initialX}px, ${event.targetTouches[0].pageY - dd.initialY}px)`;
     dd.indexTo = dd.getPosition(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
-    if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number") {
+    if (typeof dd.indexFrom === "number" && typeof dd.indexTo === "number" && !dd.wasInside) {
         dd.lastSpot = dd.indexTo;
-        dd.spots[dd.indexTo].classList.add("hovered");
+        dd.spots[dd.indexTo] && dd.spots[dd.indexTo].classList.add("hovered");
         dd.pushTags(dd.indexFrom < dd.indexTo);
         dd.wasInside = true;
     }
-    else if (dd.wasInside) {
-        dd.spots[dd.lastSpot].classList.remove("hovered");
+    else {
+        dd.spots[dd.lastSpot] && dd.spots[dd.lastSpot].classList.remove("hovered");
         dd.removeUpDownFromTags();
         dd.wasInside = false;
     }
